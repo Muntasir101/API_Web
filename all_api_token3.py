@@ -76,13 +76,20 @@ def get_all_users():
 @app.route('/users', methods=['POST'])
 @auth.login_required
 def add_user():
-    name = request.json['name']
-    email = request.json['email']
-    password = request.json['password']
+    if not request.json:
+        return jsonify({'error': 'No JSON data received'}), 400
+
+    name = request.json.get('name')
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    if not name or not email or not password:
+        return jsonify({'error': 'Name, email, and password are required fields'}), 400
+
     # Insert new record into the database
     cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, password))
     db.commit()
-    return jsonify({'message': 'User added successfully'})
+    return jsonify({'message': 'User added successfully'}), 200
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
