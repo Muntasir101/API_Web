@@ -89,7 +89,7 @@ def add_user():
     # Insert new record into the database
     cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, password))
     db.commit()
-    return jsonify({'message': 'User added successfully'}), 200
+    return jsonify({'message': 'User added successfully'}), 201
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
@@ -112,12 +112,21 @@ def get_user(user_id):
 @app.route('/users/<int:user_id>', methods=['PUT'])
 @auth.login_required
 def update_user(user_id):
-    name = request.json['name']
-    email = request.json['email']
+    if not request.json:
+        return jsonify({'error': 'No JSON data received'}), 400
+
+    name = request.json.get('name')
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    if not name or not email or not password:
+        return jsonify({'error': 'Name, email, and password are required fields'}), 400
+
     # Update the record in the database
-    cursor.execute("UPDATE users SET name = %s, email = %s WHERE id = %s", (name, email, user_id))
+    cursor.execute("UPDATE users SET name = %s, email = %s, password = %s WHERE id = %s",
+                   (name, email, password, user_id))
     db.commit()
-    return jsonify({'message': 'User updated successfully'})
+    return jsonify({'message': 'User updated successfully'}), 200
 
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
@@ -126,7 +135,7 @@ def delete_user(user_id):
     # Delete the record from the database
     cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
     db.commit()
-    return jsonify({'message': 'User deleted successfully'})
+    return jsonify({'message': 'User deleted successfully'}), 204
 
 
 if __name__ == '__main__':
