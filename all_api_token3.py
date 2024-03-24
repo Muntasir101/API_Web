@@ -76,6 +76,37 @@ def get_all_users():
 @app.route('/users', methods=['POST'])
 @auth.login_required
 def add_user():
+    """
+    Add a new user to the system.
+
+    This endpoint allows authenticated users to add a new user to the system.
+
+    Parameters:
+        None
+
+    Request Body:
+        - name (str): The name of the user.
+        - email (str): The email address of the user.
+        - password (str): The password of the user.
+
+    Returns:
+        A JSON response with the following format:
+        - Success (201 Created):
+            {
+                "message": "User added successfully"
+            }
+        - Error (400 Bad Request):
+            {
+                "error": "No JSON data received"
+            }
+            or
+            {
+                "error": "Name, email, and password are required fields"
+            }
+
+    Raises:
+        None
+    """
     if not request.json:
         return jsonify({'error': 'No JSON data received'}), 400
 
@@ -90,6 +121,7 @@ def add_user():
     cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, password))
     db.commit()
     return jsonify({'message': 'User added successfully'}), 201
+
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
