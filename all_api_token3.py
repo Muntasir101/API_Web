@@ -127,6 +127,16 @@ def add_user():
 @app.route('/users/<int:user_id>', methods=['GET'])
 @auth.login_required
 def get_user(user_id):
+    """
+    Retrieve user information based on the provided user_id.
+
+    Args:
+        user_id (int): The unique identifier of the user.
+
+    Returns:
+        flask.Response: JSON response containing user information if found,
+        otherwise a message indicating that the user was not found.
+    """
     # Fetch the record from the database
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
@@ -139,6 +149,7 @@ def get_user(user_id):
         return jsonify(user_dict)
     else:
         return jsonify({'message': 'User not found'})
+
 
 
 @app.route('/users/<int:user_id>', methods=['PUT'])
