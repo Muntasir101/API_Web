@@ -175,10 +175,20 @@ def update_user(user_id):
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 @auth.login_required
 def delete_user(user_id):
+    """
+    Delete a user based on the provided user_id.
+
+    Args:
+        user_id (int): The unique identifier of the user to be deleted.
+
+    Returns:
+        flask.Response: JSON response indicating the success of the deletion.
+    """
     # Delete the record from the database
     cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
     db.commit()
     return jsonify({'message': 'User deleted successfully'}), 204
+
 
 
 if __name__ == '__main__':
