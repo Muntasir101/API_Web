@@ -155,6 +155,15 @@ def get_user(user_id):
 @app.route('/users/<int:user_id>', methods=['PUT'])
 @auth.login_required
 def update_user(user_id):
+    """
+    Update user information based on the provided user_id.
+
+    Args:
+        user_id (int): The unique identifier of the user to be updated.
+
+    Returns:
+        flask.Response: JSON response indicating the success of the update operation.
+    """
     if not request.json:
         return jsonify({'error': 'No JSON data received'}), 400
 
